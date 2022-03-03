@@ -27,4 +27,14 @@ router.post('/', async (req, res) => {
   }
 });
 
+//hay que chequear que ande
+router.put('/', async (req, res) => {
+  const savedUser = await User.findOneAndUpdate({_id: req.body._id}, req.body);
+  try {
+    res.json(savedUser);
+  } catch(err) {
+    res.json({message: err});
+  }
+});
+
 module.exports = router;
