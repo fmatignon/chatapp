@@ -4,8 +4,13 @@ const userController = require('../controllers/user.controller');
 const User = require('../models/user.model');
 
 
-router.get('/', (req, res) => {
-  res.send('from the router');
+router.get('/', async(req, res) => {
+  try{
+    const users = await User.find();
+    res.send(users);
+  }catch(err){
+    res.status(500).send(err);
+  }
 });
 
 router.post('/', async (req, res) => {
