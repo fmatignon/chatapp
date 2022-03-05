@@ -19,13 +19,19 @@ router.post('/', async (req, res) => {
     password: req.body.password,
     mail: req.body.mail
   });
-  const savedUser = await user.save();
-  try {
-    res.json(savedUser);
-  } catch(err) {
-    res.json({message: err});
+  console.log(await checkMail(req.body.mail))
+  if(await checkMail(req.body.mail)){
+    const savedUser = await user.save();
+    try {
+      res.json(savedUser);
+    } catch(err) {
+      res.json({message: err});
+    }
   }
-});
+  else res.status(409).send({message:"Mail alredy exist"})
+}
+
+)
  
 router.put('/', async (req, res) => {
   const savedUser = await User.findOneAndUpdate({_id: req.body._id}, req.body);
@@ -50,5 +56,10 @@ router.post('/login', async (req, res) => {
   }
 
 })
+
+// Cambiar por el que sea el identificador primario
+async function checkMail(currentMail){
+  return await User.findOne({mail:currentMail}).exec() == null
+}
 
 module.exports = router;
