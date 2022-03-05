@@ -57,6 +57,18 @@ router.post('/login', async (req, res) => {
 
 })
 
+// iniciar sesión, falta hashear la contraseńa
+router.post('/delete', async (req, res) => {
+  console.log(req.body)
+  var cosito = await User.findOneAndDelete({mail:req.body.mail}).exec();
+  try {
+    res.json({message:"User with mail "+req.body.mail+" was delete"});
+  } catch(err) {
+    res.json({message: err});
+  }
+})
+
+
 // Cambiar por el que sea el identificador primario
 async function checkMail(currentMail){
   return await User.findOne({mail:currentMail}).exec() == null
