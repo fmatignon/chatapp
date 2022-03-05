@@ -36,4 +36,20 @@ router.put('/', async (req, res) => {
   }
 });
 
+// iniciar sesión, falta hashear la contraseńa
+router.post('/login', async (req, res) => {
+  console.log(req.body.username)
+  const currentUser = await User.findOne({username: req.body.username}).exec()
+  if(req.body.password == currentUser.password){
+    try {
+      res.json(currentUser);
+    } catch(err) {
+      res.json({message: err});
+  }}
+  else{
+      res.json({message:"wrong password"})
+  }
+
+})
+
 module.exports = router;
