@@ -57,7 +57,6 @@ router.post('/login', async (req, res) => {
 
 })
 
-// iniciar sesión, falta hashear la contraseńa
 router.post('/delete', async (req, res) => {
   console.log(req.body)
   var cosito = await User.findOneAndDelete({mail:req.body.mail}).exec();
@@ -67,6 +66,7 @@ router.post('/delete', async (req, res) => {
     res.json({message: err});
   }
 })
+
 
 
 // Cambiar por el que sea el identificador primario
