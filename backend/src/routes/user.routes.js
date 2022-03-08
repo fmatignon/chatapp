@@ -14,6 +14,17 @@ router.get('/', async(req, res) => {
     res.status(500).send(err);
   }
 });
+router.get('/protected', async(req, res) => {
+  console.log(req.headers['access-token'])
+  try{
+    // asi se verifica al usuario que mandó la petición
+    console.log(jwt.verify(req.headers['access-token'],'shhhhh'))
+    const users = await User.find();
+    res.send(users);
+  }catch(err){
+    res.status(500).send(err);
+  }
+});
 
 // Crear nuevo usuario
 // TODO: Hashear contraseña.
@@ -41,6 +52,7 @@ router.put('/', async (req, res) => {
 // iniciar sesión, falta hashear la contraseńa
 // TODO: agregar JWT. Comprobar contraseña hasheada.
 router.post('/login', async (req, res) => {
+  console.log(req.body)
   const currentUser = await User.findOne({username: req.body.username}).exec()
   // Es una implementación precaria de jwt, se puede complejizar
   const token = jwt.sign({username:currentUser.username},'shhhhh');
