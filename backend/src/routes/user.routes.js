@@ -13,7 +13,9 @@ router.get('/', async(req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+// Crear nuevo usuario
+// TODO: Hashear contraseña.
+router.post('/signup', async (req, res) => {
   const user = new User({
     username: req.body.username,
     password: req.body.password,
@@ -29,10 +31,8 @@ router.post('/', async (req, res) => {
     }
   }
   else res.status(409).send({message:"Mail alredy exist"})
-}
+});
 
-)
- 
 router.put('/', async (req, res) => {
   const savedUser = await User.findOneAndUpdate({_id: req.body._id}, req.body);
   try {
@@ -43,25 +43,18 @@ router.put('/', async (req, res) => {
 });
 
 // iniciar sesión, falta hashear la contraseńa
+// TODO: agregar JWT. Comprobar contraseña hasheada.
 router.post('/login', async (req, res) => {
   const currentUser = await User.findOne({username: req.body.username}).exec()
-  if((currentUser != null)&&(req.body.password == currentUser.password)){
-    try {
-      res.json(currentUser);
-    } catch(err) {
-      res.json({message: err});
-  }}
-  else{
-      res.status(403).send({message:"wrong password or username"})
-  }
-
+  if((currentUser != null)&&(req.body.password == currentUser.password)) try {res.json(currentUser)} catch(err) {res.json({message: err})}
+  else res.status(403).send({message:"wrong password or username"})
 })
 
 router.post('/delete', async (req, res) => {
   console.log(req.body)
   var cosito = await User.findOneAndDelete({mail:req.body.mail}).exec();
   try {
-    res.json({message:"User with mail "+req.body.mail+" was delete"});
+    res.json({message:"User with mail "+req.body.mail+" was deleted"});
   } catch(err) {
     res.json({message: err});
   }

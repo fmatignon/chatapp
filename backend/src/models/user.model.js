@@ -12,7 +12,8 @@ const UserSchema = mongoose.Schema({
   },
   mail: {
     type: mongoose.SchemaTypes.Email,
-    required: true
+    required: true,
+    unique: true
   },
   chats: {
     type: Array,
