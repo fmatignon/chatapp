@@ -21,7 +21,7 @@ router.get('/protected', async(req, res) => {
   console.log(req.headers['access-token'])
   try{
     // asi se verifica al usuario que mandó la petición
-    console.log(jwt.verify(req.headers['access-token'],'shhhhh'))
+    console.log(jwt.verify(req.headers['access-token'],process.env.TOKEN_KEY))
     const users = await User.find();
     res.send(users);
   }catch(err){
@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
   console.log(req.body)
   const currentUser = await User.findOne({username: req.body.username}).exec()
   // Es una implementación precaria de jwt, se puede complejizar
-  const token = jwt.sign({username:currentUser.username},'shhhhh');
+  const token = jwt.sign({username:currentUser.username},process.env.TOKEN_KEY);
   if((currentUser != null)&&(req.body.password == currentUser.password)) {
     try {res.json(token)} 
     catch(err) {res.json({message: err})}}
