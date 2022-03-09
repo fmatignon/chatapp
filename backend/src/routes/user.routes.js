@@ -6,6 +6,8 @@ const userController = require('../controllers/user.controller');
 const User = require('../models/user.model');
 
 
+router.get('/', userController.getUsers);
+/*
 router.get('/', async(req, res) => {
   try{
     const users = await User.find();
@@ -14,6 +16,7 @@ router.get('/', async(req, res) => {
     res.status(500).send(err);
   }
 });
+*/
 router.get('/protected', async(req, res) => {
   console.log(req.headers['access-token'])
   try{
@@ -27,7 +30,8 @@ router.get('/protected', async(req, res) => {
 });
 
 // Crear nuevo usuario
-// TODO: Hashear contraseña.
+router.post('/register', userController.register)
+/*
 router.post('/signup', async (req, res) => {
   const user = new User({
     username: req.body.username,
@@ -42,6 +46,7 @@ router.post('/signup', async (req, res) => {
   }
   else res.status(409).send({message:"Mail alredy exist"})
 });
+*/
 
 router.put('/', async (req, res) => {
   const savedUser = await User.findOneAndUpdate({_id: req.body._id}, req.body);
