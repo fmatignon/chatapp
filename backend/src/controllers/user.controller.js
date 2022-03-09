@@ -1,30 +1,32 @@
 const userService = require('../services/user.service');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-exports.getUsers = async function(res, req) {
+exports.getUsers = async function(req, res) {
   // Setear parámetros por defecto del request.
-  var page = req.params.page ? req.params.page : 1;
-  var limit = req.params.limit ? req.params.limit : 10;
+  //var page = req.params.page ? req.params.page : 1;
+  //var limit = req.params.limit ? req.params.limit : 10;
   // Pasar la call al service
   try {
-    const users = await userService.getUsers({}, page, limit);
+    const users = await userService.getUsers();
     res.send(users);
   } catch(err) {
     res.status(500).send(err);
   }
 };
-// TODO: implementar las llamadas a la base de datos en el servicio.
-exports.register = async function (res, req) {
+
+exports.register = async function (req, res) {
   try {
     // Registrar el input del usario
     // Validar que haya puesto todo
+    console.log(req.body)
     const { username, password, mail } = req.body;
     if (!(mail && password && username)) {
       return res.status(400).send("All input is required");
     };
 
     // Validar que no exista en la base de datos
-    const oldUser = await userService.getUser({ mail })
+    const oldUser = await userService.getUser({ mail });
     if (oldUser) {
       return res.status(409).send("User Already Exists. Please Login");
     }
@@ -48,6 +50,7 @@ exports.register = async function (res, req) {
         expiresIn: "2h",
       }
     );
+
     user.token = token;
 
     // Devolver el usuario creado.

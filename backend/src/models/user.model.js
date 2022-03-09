@@ -1,3 +1,4 @@
+const { TokenExpiredError } = require('jsonwebtoken');
 const mongoose = require('mongoose');
 require('mongoose-type-email');
 
@@ -21,7 +22,8 @@ const UserSchema = mongoose.Schema({
   contacts: {
     type: Array,
     default: []
-  }
+  },
+  token: {type: String}
 });
 
 module.exports = mongoose.model('User', UserSchema);
