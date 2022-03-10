@@ -56,7 +56,8 @@ router.put('/', async (req, res) => {
 
 // iniciar sesión, falta hashear la contraseńa
 // TODO: agregar JWT. Comprobar contraseña hasheada.
-router.post('/login', async (req, res) => {
+router.post('/login', userController.login)
+/* async (req, res) => {
   console.log(req.body)
   const currentUser = await User.findOne({username: req.body.username}).exec()
   // Es una implementación precaria de jwt, se puede complejizar
@@ -65,7 +66,7 @@ router.post('/login', async (req, res) => {
     try {res.json(token)} 
     catch(err) {res.json({message: err})}}
   else res.status(403).send({message:"wrong password or username"})
-})
+}*/
 
 router.post('/delete', async (req, res) => {
   await User.findOneAndDelete({mail:req.body.mail}).exec();

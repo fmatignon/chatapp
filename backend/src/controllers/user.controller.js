@@ -58,5 +58,21 @@ exports.register = async function (req, res) {
     }
   catch (err) {
     console.log(err);
+  }}
+
+  exports.login = async (req, res) => {
+    const currentUser = await userService.getUser({username: req.body.username})
+    // Es una implementación precaria de jwt, se puede complejizar
+       // Crear jwt y guardarlo en el user
+    const token = jwt.sign(
+        { user_id: req.body.username},
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: "2h",
+        }
+      );
+    if((currentUser != null)&&(req.body.password == currentUser.password)) {
+      try {res.json(token)} 
+      catch(err) {res.json({message: err})}}
+    else res.status(403).send({message:"wrong password or username"})
   }
-}
