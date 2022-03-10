@@ -7,6 +7,7 @@ exports.getUsers = async function(req, res) {
   //var page = req.params.page ? req.params.page : 1;
   //var limit = req.params.limit ? req.params.limit : 10;
   // Pasar la call al service
+  // console.log(jwt.verify(req.headers['access-token'],process.env.TOKEN_KEY))
   try {
     const users = await userService.getUsers();
     res.send(users);
@@ -62,8 +63,7 @@ exports.register = async function (req, res) {
 
   exports.login = async (req, res) => {
     const currentUser = await userService.getUser({username: req.body.username})
-    // Es una implementación precaria de jwt, se puede complejizar
-       // Crear jwt y guardarlo en el user
+    let actualPass =  await bcrypt.hash(req.body.password, 10);
     const token = jwt.sign(
         { user_id: req.body.username},
         process.env.TOKEN_KEY,
@@ -71,7 +71,8 @@ exports.register = async function (req, res) {
           expiresIn: "2h",
         }
       );
-    if((currentUser != null)&&(req.body.password == currentUser.password)) {
+    console.log(actualPass)
+    if((currentUser != null)&&( actualPass == currentUser.password)) {
       try {res.json(token)} 
       catch(err) {res.json({message: err})}}
     else res.status(403).send({message:"wrong password or username"})
