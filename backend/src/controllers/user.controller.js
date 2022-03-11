@@ -63,7 +63,6 @@ exports.register = async function (req, res) {
 
   exports.login = async (req, res) => {
     const currentUser = await userService.getUser({username: req.body.username})
-    let actualPass =  await bcrypt.hash(req.body.password, 10);
     const token = jwt.sign(
         { user_id: req.body.username},
         process.env.TOKEN_KEY,
@@ -71,8 +70,7 @@ exports.register = async function (req, res) {
           expiresIn: "2h",
         }
       );
-    console.log(actualPass)
-    if((currentUser != null)&&( actualPass == currentUser.password)) {
+    if((currentUser != null)&&( bcrypt.compareSync(req.body.password, currentUser.password))){
       try {res.json(token)} 
       catch(err) {res.json({message: err})}}
     else res.status(403).send({message:"wrong password or username"})
