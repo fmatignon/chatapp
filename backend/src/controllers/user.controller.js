@@ -16,6 +16,7 @@ exports.getUsers = async function(req, res) {
   }
 };
 
+// CREAR NUEVO USUARIO
 exports.register = async function (req, res) {
   try {
     // Registrar el input del usario
@@ -45,7 +46,7 @@ exports.register = async function (req, res) {
 
     // Crear jwt y guardarlo en el user
     const token = jwt.sign(
-      { user_id: user._id, mail },
+      { user_id: user._id },
       process.env.TOKEN_KEY,
       {
         expiresIn: "2h",
@@ -61,17 +62,29 @@ exports.register = async function (req, res) {
     console.log(err);
   }}
 
+  // INICIAR SESIÓN
   exports.login = async (req, res) => {
-    const currentUser = await userService.getUser({username: req.body.username})
-    const token = jwt.sign(
-        { user_id: req.body.username},
-        process.env.TOKEN_KEY,
-        {
-          expiresIn: "2h",
-        }
-      );
-    if((currentUser != null)&&( bcrypt.compareSync(req.body.password, currentUser.password))){
-      try {res.json(token)} 
-      catch(err) {res.json({message: err})}}
-    else res.status(403).send({message:"wrong password or username"})
-  }
+    try {
+      // Verificar que el input esté completo
+      if (!(req.body.username && req.body.password)) return res.status(400).send("All input is required");
+      // Verificar que exista el usuario
+      const user = await userService.getUser({username: req.body.username});
+      // Si el usuario y la contraseña están bien, crearle un token
+      if(user && (await bcrypt.compare(req.body.password, user.password))) {
+        // Crear token y guardarlo en el usuario
+        const token = jwt.sign(
+          { user_id: user._id },
+          process.env.TOKEN_KEY,
+          {
+            expiresIn: "2h",
+          }
+        );
+      user.token = token;
+      // Devolver usuario
+      return res.status(200).json(user);
+      }
+      // Contraseña o usuario incorrecto
+      return res.status(403).send("Invalid credentials");
+    }
+    catch(err) {return res.status(400).json({message: err.message})};
+  };
